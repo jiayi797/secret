@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <style type="text/css">
+      body,html,#container{
+        height: 100%;
+        margin: 0px;
+        font:12px Arial;
+      }
+      .taiwan{
+        border: solid 1px red;
+        color: red;
+        float: left;
+        width: 50px;
+        background-color: rgba(255,0,0,0.1)
+      }
+    </style>
+    <title>Marker example</title>
+  </head>
+  <body>
+    <form name="demoForm" id="demoForm" method="post" enctype="multipart/form-data"
+  action="javascript: uploadAndSubmit();"> 
+  <p>Upload File: <input type="file" name="file" /></p> 
+  <p><input type="submit" value="Submit" /></p> 
+  </form> 
+   <div id="container" tabindex="0"></div>
+   <script src="http://webapi.amap.com/js/marker.js"></script>
+   <script src="http://webapi.amap.com/maps?v=1.3&key=37459d76f1d60a05e39986ded547fc26"></script>
+   
+   <script type="text/javascript">
+        var map = new AMap.Map('container',{
+          resizeEnable: true,
+          zoom:12,
+         // lang:"en"
+        });
+
+        var markers = []; //province见Demo引用的JS文件
+            // 实例化点标记
+        function addMarkerWithTransform(x,y) {
+           //x = 116.355136;
+           //y = 39.961059;
+            var str = "" + x + "," + y;
+            new AMap.convertFrom(str, "gps", function(status, result) {
+                marker = new AMap.Marker({
+                    icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",
+                    position: [result.locations[0].lng,result.locations[0].lat]
+                });
+                marker.setMap(map);
+            });
+            
+        }
+    		function addMarker(lng, lat){
+    			marker = new AMap.Marker({
+    				icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",
+    				position: [lng,lat]
+    			});
+    			marker.setMap(map);
+    		}
+        // function transform(x,y){
+        //   var str = "" + x + "," + y;
+        //   var conted = new AMap.convertFrom(str, "gps", function(status, result) {
+        //       console.log( "result=" + result.locations);
+        //       return result.locations;
+        //   });
+        // }
+        function mark(content){
+          var lines = content.split("\n");
+          console.log("lines.length = " + lines.length); 
+          var first = true;
+          for(var i = 0; i < lines.length; i++){
+            if(first == true){first = false; continue;}
+            var temp = lines[i].split(",");
+      			var lat = temp[0];
+      			var lng = temp[1];
+            //temp[1] = temp[1] / 100000;
+            //temp[2] = temp[2] / 100000;
+            //addMarker(temp[2], temp[1]);
+			      addMarker(lng, lat);
+            //if(i > 1) break;
+            if(i % 100 == 0) console.log(i + "\t" + lines.length); 
+          }
+          map.setFitView();
+        }   
+		function uploadAndSubmit() { 
+			var form = document.forms["demoForm"]; 
+			// 寻找表单域中的 <input type="file" ... /> 标签
+			var file = form["file"].files[0]; 
+			// try sending 
+			var reader = new FileReader(); 
+			reader.readAsBinaryString(file); 
+			reader.onload = function(e) {
+			  mark(reader.result);
+			}
+        
+        }
+    </script>
+    <!--导入文件-->
+   <script type="text/javascript">
+     
+   </script>
+    <script type="text/javascript" src="http://webapi.amap.com/demos/js/liteToolbar.js"></script>
+  </body>
+</html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>按起终点名称规划路线</title>
+    <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css"/>
+    <style type="text/css">
+        #panel {
+            position: fixed;
+            background-color: white;
+            max-height: 90%;
+            overflow-y: auto;
+            top: 10px;
+            right: 10px;
+            width: 280px;
+        }
+    </style>
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.5&key=37459d76f1d60a05e39986ded547fc26&plugin=AMap.Driving"></script>
+    <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+</head>
+<body>
+<form name="demoForm" id="demoForm" method="post" enctype="multipart/form-data"
+action="javascript: uploadAndSubmit();"> 
+<p>Upload File: <input type="file" name="file" /></p> 
+<p><input type="submit" value="Submit" /></p> 
+</form> 
+
+<div id = "resultOut"></div>
+
+<!--导入文件-->
+   <script type="text/javascript">
+     function uploadAndSubmit() { 
+        var form = document.forms["demoForm"]; 
+        // 寻找表单域中的 <input type="file" ... /> 标签
+        var file = form["file"].files[0]; 
+        // try sending 
+        var reader = new FileReader(); 
+        reader.readAsBinaryString(file); 
+        reader.onload = function(e) {
+          computeDist(reader.result);
+        }
+        
+        }
+   </script>
+<script type="text/javascript">
+    function computeDist(data){
+        var lines = data.split("\n");
+        console.log("lines.length = " + lines.length); 
+        var first = true;
+        var driving = new AMap.Driving({
+            //map: map,
+            //panel: "panel"
+        }); 
+        var memo = new Array(lines.length);
+        
+        for(var i = 1; i < lines.length; i++){
+          var temp = lines[i].split(",");
+          temp[1] = temp[1] / 100000;
+          temp[2] = temp[2] / 100000;
+          memo[i] = new Array(temp[2], temp[1]);
+          for(var j = 1; j < i;){
+            // 根据起终点名称规划驾车导航路线
+            driving.search([memo[i][0], memo[i][1]], [memo[j][0], memo[j][1]], function(status, result) {
+                //TODO 解析返回结果，自己生成操作界面和地图展示界面
+                var distij = result.routes[0].distance;
+                var str = String(i) + "," + String(j) + "," + String(distij);
+                display(str);
+                j = j + 1;
+            });
+            //f.Write(memo[i][2] + "," + memo[j][2] + "," + distij);
+          }
+          if(i > 10) break;
+          if(i % 100 == 0) console.log(i + "\t" + lines.length); 
+        }
+    }
+    function display(str){
+        var p = document.createElement("P");
+        p.innerHTML = str;
+        document.getElementById("resultOut").appendChild(p);
+    }
+
+    function dist(p1, p2){
+        //构造路线导航类
+        
+        // 根据起终点名称规划驾车导航路线
+        driving.search([116.379028, 39.865042], [116.427281, 39.903719], function(status, result) {
+         //TODO 解析返回结果，自己生成操作界面和地图展示界面
+         return result.routes[0].distance;
+        });
+    }
+    
+
+
+  
+</script>
+</body>
+</html>
