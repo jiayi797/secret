@@ -44,32 +44,24 @@ public class Stations {
         List<Point> candidates0 = new ArrayList<>();
         // pick points who's Euclidean distance is smaller than 1km
         for(Point p : points){
-            if(getDistance(p,o) <= 1){
+            if(getDistance(p,o) <= 1000){
                 candidates0.add(p);
             }
         }
         double min = 500; // m
         List<CandidatePoint> candidates = new ArrayList<>();
         // pick points who's walking distance is smaller than min meters
+        CandidatePoint o1 = new CandidatePoint(o.longitude, o.latitude, 0);
         for(Point p : candidates0){
-            double walkingDist = getWalkingDistance(p,o);
+            double walkingDist = o1.getWalkingDistance(p);
             if(walkingDist <= min){
-                candidates.add(new CandidatePoint(p.latitude, p.longitude, walkingDist));
+                candidates.add(new CandidatePoint(p.longitude, p.latitude, walkingDist));
             }
         }
         return candidates;
     }
-    private double getWalkingDistance(Point a, Point b){
-        String url = "http://restapi.amap.com/v3/direction/walking?";
-        url += ("key=2a19f25ef9117a9c5b32c96b6f57dedd"+
-                "&origin="+a.toString()+
-                "&destination="+b.toString()
-        );
-        JSONObject jsonObj = new JSONObject(HttpClient.doGet(url));
-        String dist = (String)(((JSONObject)((JSONArray)(((JSONObject)jsonObj.get("route")).get("paths"))).get(0)).get("distance"));
-        return Double.valueOf(dist);
-    }
-    private final double EARTH_RADIUS = 6371.393;
+
+    private final double EARTH_RADIUS = 6371393; // m
     private double rad(double d)
     {
         return d * Math.PI / 180.0;
@@ -81,9 +73,7 @@ public class Stations {
         double b = rad(p1.longitude) - rad(p2.longitude);
         double s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a/2),2) +
                 Math.cos(radLat1)*Math.cos(radLat2)*Math.pow(Math.sin(b/2),2)));
-        s = s * EARTH_RADIUS;
-        //s = Math.round(s);
-        return s;
+        return s * EARTH_RADIUS;
 
     }
 
