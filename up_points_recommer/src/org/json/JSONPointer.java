@@ -37,7 +37,7 @@ SOFTWARE.
  * A JSON Pointer is a simple query language defined for JSON documents by
  * <a href="https://tools.ietf.org/html/rfc6901">RFC 6901</a>.
  * 
- * In a nutshell, JSONPointer allows the user to navigate into a JSON document
+ * Candidates a nutshell, JSONPointer allows the user to navigate into a JSON document
  * using strings, and retrieve targeted objects, like a simple form of XPATH.
  * Path segments are separated by the '/' char, which signifies the root of
  * the document when it appears as the first char of the string. Array 

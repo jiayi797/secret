@@ -200,7 +200,7 @@ public class JSONWriter {
     }
 
     /**
-     * Append a key. The key will be associated with the next value. In an
+     * Append a key. The key will be associated with the next value. Candidates an
      * object, every value must be preceded by a key.
      * @param string A key string.
      * @return this

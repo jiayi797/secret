@@ -457,7 +457,7 @@ public class JSONObject {
      * Accumulate values under a key. It is similar to the put method except
      * that if there is already an object stored under the key then a JSONArray
      * is stored under the key to hold all of the accumulated values. If there
-     * is already a JSONArray, then the new value is appended to it. In
+     * is already a JSONArray, then the new value is appended to it. Candidates
      * contrast, the put method replaces the previous value.
      *
      * If only one value is accumulated that is not a JSONArray, then the result
@@ -1936,7 +1936,7 @@ public class JSONObject {
     /**
      * Produce a string in double quotes with backslash sequences in all the
      * right places. A backslash will be inserted within </, producing <\/,
-     * allowing JSON text to be delivered in HTML. In JSON text, a string cannot
+     * allowing JSON text to be delivered in HTML. Candidates JSON text, a string cannot
      * contain a control character or an unescaped quote or backslash.
      *
      * @param string

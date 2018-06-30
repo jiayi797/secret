@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-1.11.1.min.js"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>地图点击事件</title>
+    <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css"/>
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.6&key=您申请的key值"></script>
+    <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+</head>
+<body>
+<div id="container"></div>
+<div id="tip">点击地图试试</div>
+<script type="text/javascript">
+    var start = true;
+    var end = true;
+    var startPos = [];
+    var endPos = [];
+</script>
+<script type="text/javascript">
+    //初始化地图对象，加载地图
+    var map = new AMap.Map("container", {
+        resizeEnable: true,
+        zoom : 14,
+        center: [116.357825,39.962527]//中心点坐标
+    });
+    
+    
+    map.on('click', function(e) {  
+        content = "";
+        if(start == true){
+            startPos = e.lnglat;
+            content = "我是起点";
+            start = false;
+        }else if(end == true){
+            endPos = e.lnglat;
+            content = "我是终点";
+            end = false;
+            $.get("/HelloWorld?data="+startPos+";"+endPos,function(candidates,status){
+                // 获取到所有的候选点candidates
+                var candidates = candidates.split(";");
+                for(i = 0 ; i < candidates.length; ++i){
+                    info = candidates[i].split("_");
+                    d = info[0];
+                    d = d.split(",");
+                    var marker = new AMap.Marker({
+                        position: [parseFloat(d[0]), parseFloat(d[1])],
+                        icon: '//vdata.amap.com/icons/b18/1/2.png'
+                    });
+                    marker.setMap(map);
+                    // 设置label标签
+                    marker.setLabel({//label默认蓝框白底左上角显示，样式className为：amap-marker-label
+                        offset: new AMap.Pixel(20, 20),//修改label相对于maker的位置
+                        content: "rank "+info[1]
+                    });
+                }
+            });
+
+        }else{
+            return;
+        }
+        var marker = new AMap.Marker({
+            position: [e.lnglat.getLng(), e.lnglat.getLat()]
+            });
+            marker.setMap(map);
+            // 设置label标签
+            marker.setLabel({//label默认蓝框白底左上角显示，样式className为：amap-marker-label
+                offset: new AMap.Pixel(20, 20),//修改label相对于maker的位置
+                content: content
+        });
+        if(start == false && end == false){
+            var lineArr = [
+                startPos, endPos
+            ];
+            var polyline = new AMap.Polyline({
+                path: lineArr,          //设置线覆盖物路径
+                strokeColor: "#3366FF", //线颜色
+                strokeOpacity: 1,       //线透明度
+                strokeWeight: 5,        //线宽
+                strokeStyle: "solid",   //线样式
+                strokeDasharray: [10, 5] //补充线样式
+            });
+            polyline.setMap(map);
+        }
+        
+    });  
+
+        
+    
+</script>
+</body>
+</html>

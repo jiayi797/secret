@@ -8,7 +8,9 @@ import org.json.*;
 
 public class Stations {
     private Point[] points;
+    Stations(boolean helper){
 
+    }
     Stations(String filename){
         File file = new File(filename);
         try{
@@ -41,21 +43,30 @@ public class Stations {
         }
     }
     public List<CandidatePoint> findK(Point o){
+        double minEu = 0;
         List<Point> candidates0 = new ArrayList<>();
-        // pick points who's Euclidean distance is smaller than 1km
-        for(Point p : points){
-            if(getDistance(p,o) <= 1000){
-                candidates0.add(p);
+        while (candidates0.size() == 0){
+            minEu += 500;
+            // pick points who's Euclidean distance is smaller than 1km
+            for(Point p : points){
+                if(getDistance(p,o) <= minEu){
+                    candidates0.add(p);
+                }
             }
         }
-        double min = 500; // m
+
         List<CandidatePoint> candidates = new ArrayList<>();
-        // pick points who's walking distance is smaller than min meters
-        CandidatePoint o1 = new CandidatePoint(o.longitude, o.latitude, 0);
-        for(Point p : candidates0){
-            double walkingDist = o1.getWalkingDistance(p);
-            if(walkingDist <= min){
-                candidates.add(new CandidatePoint(p.longitude, p.latitude, walkingDist));
+        double min = 0;
+        while(candidates.size() == 0) {
+            min += 500; // m
+            //List<CandidatePoint> candidates = new ArrayList<>();
+            // pick points who's walking distance is smaller than min meters
+            CandidatePoint o1 = new CandidatePoint(o.longitude, o.latitude, 0);
+            for (Point p : candidates0) {
+                double walkingDist = o1.getWalkingDistance(p);
+                if (walkingDist <= min) {
+                    candidates.add(new CandidatePoint(p.longitude, p.latitude, walkingDist));
+                }
             }
         }
         return candidates;
@@ -66,7 +77,7 @@ public class Stations {
     {
         return d * Math.PI / 180.0;
     }
-    private double getDistance(Point p1, Point p2){
+    public double getDistance(Point p1, Point p2){
         double radLat1 = rad(p1.latitude);
         double radLat2 = rad(p2.latitude);
         double a = radLat1 - radLat2;

@@ -21,7 +21,7 @@ public class CandidatePoint extends Point implements Comparable<CandidatePoint>{
 
     public double getWalkingDistance( Point b){
         String url = "http://restapi.amap.com/v3/direction/walking?";
-        url += ("key=2a19f25ef9117a9c5b32c96b6f57dedd"+
+        url += ("key="+Candidates.key+
                 "&origin="+this.toString()+
                 "&destination="+b.toString()
         );
@@ -31,7 +31,7 @@ public class CandidatePoint extends Point implements Comparable<CandidatePoint>{
     }
     public JSONObject getCarRoad(Point b){
         String url = "http://restapi.amap.com/v3/direction/driving?";
-        url += ("key=2a19f25ef9117a9c5b32c96b6f57dedd"+
+        url += ("key="+Candidates.key+
                 "&origin="+this.toString()+
                 "&destination="+b.toString()+
                 "&strategy=0");
@@ -56,5 +56,13 @@ public class CandidatePoint extends Point implements Comparable<CandidatePoint>{
             return 0;
         }
         return Double.compare(this.totalTimeCost, o.totalTimeCost);
+    }
+    public String toStringAll(){
+        String result =  this.toString() + "," +
+                String.valueOf(walkingDistance) + "," +
+                String.valueOf(walkingTimeToOrigin) + "," +
+                String.valueOf(CarDistanceToDestination) + "," +
+                String.valueOf(CarTimeToDestination);
+        return result;
     }
 }
